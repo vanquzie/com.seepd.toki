@@ -32,7 +32,6 @@ final class PurificationHooks extends HookFeature {
     private final AtomicBoolean topIconsLogged = new AtomicBoolean(false);
     private final AtomicBoolean topSweepLogged = new AtomicBoolean(false);
     private final WeakHashMap<View, Boolean> observedRoots = new WeakHashMap<>();
-    private final WeakHashMap<View, Boolean> observedCommentRoots = new WeakHashMap<>();
     private final AtomicBoolean commentFirstHideLogged = new AtomicBoolean(false);
     private final AtomicBoolean followFirstHideLogged = new AtomicBoolean(false);
 
@@ -68,8 +67,6 @@ final class PurificationHooks extends HookFeature {
     private final WeakHashMap<View, CommentObserver> commentObservers =
             new WeakHashMap<>();
     private final WeakHashMap<View, CommentObserver> followObservers =
-            new WeakHashMap<>();
-    private final WeakHashMap<View, Boolean> observedFollowRoots =
             new WeakHashMap<>();
 
     PurificationHooks(XposedModule module) {
@@ -298,7 +295,7 @@ final class PurificationHooks extends HookFeature {
             logInfo("comment-button ID backup installed for eq5");
             return 1;
         } catch (Throwable error) {
-            logError("Unable to hide 46.4.3 comment button", error);
+            logError("Unable to install comment button id backup", error);
             return 0;
         }
     }
@@ -373,7 +370,6 @@ final class PurificationHooks extends HookFeature {
             return;
         }
         followObservers.remove(decorView);
-        observedFollowRoots.remove(decorView);
         if (current != null) {
             try {
                 current.observer.removeOnGlobalLayoutListener(current.listener);
@@ -402,7 +398,6 @@ final class PurificationHooks extends HookFeature {
                         reapplyFollowButtonIdHide(rootView, followId);
                 observer.addOnGlobalLayoutListener(listener);
                 followObservers.put(decorView, new CommentObserver(observer, listener));
-                observedFollowRoots.put(decorView, Boolean.TRUE);
             }
         } catch (Throwable error) {
             logError("follow observer registration failed: " + activityName, error);
@@ -508,7 +503,6 @@ final class PurificationHooks extends HookFeature {
             return;
         }
         commentObservers.remove(decorView);
-        observedCommentRoots.remove(decorView);
         if (current != null) {
             try {
                 current.observer.removeOnGlobalLayoutListener(current.listener);
@@ -537,7 +531,6 @@ final class PurificationHooks extends HookFeature {
                         reapplyCommentButtonIdHide(rootView, commentId);
                 observer.addOnGlobalLayoutListener(listener);
                 commentObservers.put(decorView, new CommentObserver(observer, listener));
-                observedCommentRoots.put(decorView, Boolean.TRUE);
             }
         } catch (Throwable error) {
             logError("comment observer registration failed: " + activityName, error);
@@ -1100,9 +1093,8 @@ final class PurificationHooks extends HookFeature {
                     inventory.append(loc[0] + sib.getWidth() / 2 < rootWidth / 2 ? "[L]" : "[R]");
                 }
                 boolean noText = sibText == null || sibText.length() == 0;
-                boolean liveIcon = sibDesc != null && sibDesc.toString().toLowerCase(java.util.Locale.US).contains("live");
                 boolean rightHalf = rootWidth > 0 && loc[0] + sib.getWidth() / 2 >= rootWidth / 2;
-                if (topZone && shortView && noText && !liveIcon && !hidden.contains(sib)
+                if (topZone && shortView && noText && !hidden.contains(sib)
                         && sibDesc == null && rightHalf) {
                     sib.setVisibility(View.GONE);
                     final View gone = sib;

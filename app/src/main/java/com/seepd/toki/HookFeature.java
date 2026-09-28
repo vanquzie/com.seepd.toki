@@ -36,11 +36,11 @@ abstract class HookFeature {
     }
 
     protected static boolean isTikTok4713() {
-        return "47.1.3".equals(hostVersionName);
+        return ModuleConfig.TESTED_TIKTOK_VERSION_47.equals(hostVersionName);
     }
 
     protected static boolean isTikTok4643() {
-        return "46.4.3".equals(hostVersionName);
+        return ModuleConfig.TESTED_TIKTOK_VERSION.equals(hostVersionName);
     }
 
     protected static String hostTikTokVersion() {

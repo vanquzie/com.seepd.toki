@@ -50,14 +50,13 @@ public final class MainHook extends XposedModule {
             String versionName = readTikTokVersion(context);
             activeTikTokVersion = versionName == null ? "unknown" : versionName;
             ModuleConfig config = loadModuleConfig(context);
-            String activeVersion = versionName == null ? "unknown" : versionName;
             logInfo("Active for " + context.getPackageName());
-            logInfo("TikTok version: " + activeVersion);
+            logInfo("TikTok version: " + activeTikTokVersion);
             if (ModuleConfig.isSupportedTikTokVersion(versionName)) {
-                logInfo("TikTok version " + activeVersion + " is supported "
+                logInfo("TikTok version " + activeTikTokVersion + " is supported "
                         + ModuleConfig.SUPPORTED_TIKTOK_VERSIONS);
             } else {
-                logInfo("TikTok version " + activeVersion
+                logInfo("TikTok version " + activeTikTokVersion
                         + " is untested; hooks install best-effort. Supported: "
                         + ModuleConfig.SUPPORTED_TIKTOK_VERSIONS);
             }

@@ -11,7 +11,7 @@ final class ModuleConfig {
     static final String TESTED_TIKTOK_VERSION_47 = "47.1.3";
     static final long TIKTOK_BUILD_47_1_3 = 2024701030L;
     static final java.util.Set<String> SUPPORTED_TIKTOK_VERSIONS =
-            java.util.Collections.unmodifiableSet(new java.util.HashSet<>(
+            java.util.Collections.unmodifiableSet(new java.util.LinkedHashSet<>(
                     java.util.Arrays.asList(TESTED_TIKTOK_VERSION, TESTED_TIKTOK_VERSION_47)));
 
     static boolean isSupportedTikTokVersion(String versionName) {
