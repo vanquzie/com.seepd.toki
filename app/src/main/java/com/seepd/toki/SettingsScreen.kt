@@ -613,7 +613,15 @@ private fun SettingsContent(
                             title = "TikTok",
                             value = tikTokStatusText(homeState),
                             positive = homeState.tikTokInstalled &&
-                                homeState.tikTokVersion == ModuleConfig.TESTED_TIKTOK_VERSION,
+                                ModuleConfig.isSupportedTikTokVersion(homeState.tikTokVersion),
+                            valueColor =
+                                if (ModuleConfig.TESTED_TIKTOK_VERSION_47 ==
+                                    homeState.tikTokVersion
+                                ) {
+                                    MaterialTheme.colorScheme.tertiary
+                                } else {
+                                    null
+                                },
                         )
                     }
                 }
@@ -992,7 +1000,10 @@ private fun tikTokStatusText(state: HomeUiState): String {
         return stringResource(R.string.home_tiktok_not_installed)
     }
     val version = state.tikTokVersion ?: stringResource(R.string.home_version_unknown)
-    return if (state.tikTokVersion == ModuleConfig.TESTED_TIKTOK_VERSION) {
+    if (ModuleConfig.TESTED_TIKTOK_VERSION_47 == state.tikTokVersion) {
+        return stringResource(R.string.home_tiktok_supported_version, version)
+    }
+    return if (ModuleConfig.isSupportedTikTokVersion(state.tikTokVersion)) {
         stringResource(R.string.home_tiktok_tested_version, version)
     } else {
         stringResource(R.string.home_tiktok_untested_version, version)
@@ -1214,6 +1225,7 @@ private fun StatusSettingRow(
     title: String,
     value: String,
     positive: Boolean,
+    valueColor: androidx.compose.ui.graphics.Color? = null,
 ) {
     Surface(
         modifier = Modifier
@@ -1238,7 +1250,7 @@ private fun StatusSettingRow(
             )
             Text(
                 text = value,
-                color = if (positive) {
+                color = valueColor ?: if (positive) {
                     MaterialTheme.colorScheme.primary
                 } else {
                     MaterialTheme.colorScheme.error

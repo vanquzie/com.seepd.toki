@@ -2,7 +2,7 @@
 
 [English](#toki) | [中文](#中文) | [Changelog](CHANGELOG.md) | [更新日志](CHANGELOG.md#中文) | [Telegram](https://t.me/toki_lsposed)
 
-Toki is a libxposed API 102 enhancement module implemented and tested for official TikTok 46.4.3.
+Toki is a libxposed API 102 enhancement module implemented and tested for official TikTok 47.1.3 and 46.4.3.
 It only targets `com.zhiliaoapp.musically`.
 
 ## Features
@@ -37,7 +37,7 @@ It only targets `com.zhiliaoapp.musically`.
 
 - Android 8.0 or later
 - An LSPosed implementation that supports libxposed API 102
-- Official TikTok 46.4.3 with package name `com.zhiliaoapp.musically`. Other versions are outside
+- Official TikTok 47.1.3 and 46.4.3 with package name `com.zhiliaoapp.musically`. Other versions are outside
   the support scope and receive no version-specific compatibility work or guarantees.
 - The module APK is architecture-independent.
 
@@ -104,7 +104,7 @@ compatibility; make sure your use complies with local law and the applicable ter
 
 ## 中文
 
-Toki 是面向官方 TikTok 46.4.3 实现并完成测试的 libxposed API 102 功能增强模块，仅作用于
+Toki 是面向官方 TikTok 47.1.3 与 46.4.3 实现并完成测试的 libxposed API 102 功能增强模块，仅作用于
 `com.zhiliaoapp.musically`。其他版本不在支持范围内，不提供专门适配或兼容保证。
 
 ### 功能
@@ -129,7 +129,7 @@ Toki 是面向官方 TikTok 46.4.3 实现并完成测试的 libxposed API 102 �
 
 - Android 8.0 或更高版本
 - 支持 libxposed API 102 的 LSPosed 实现
-- 官方 TikTok 46.4.3，包名 `com.zhiliaoapp.musically`；其他版本不在支持范围内
+- 官方 TikTok 47.1.3 与 46.4.3，包名 `com.zhiliaoapp.musically`；其他版本不在支持范围内
 - 模块 APK 不区分设备架构
 
 ### 安装

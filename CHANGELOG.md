@@ -2,6 +2,14 @@
 
 [English](#changelog) | [中文](#中文)
 
+## 0.4.24-1553-beta
+
+- Added official TikTok 47.1.3 support (46.4.3 legacy paths kept): top tab rows, bottom bar, and search entry hide by label instead of retired resource ids.
+- Covered rotated tabs on both bars (STEM, Friends, Drama, Shop) plus the top overflow chevron and the center create button; emptied bar shells collapse so the feed reclaims the slot.
+- Follow button hides persistently via the ix9 id backup; favorite covers both Assem paths; comment button keeps its eq5 backup with count hiding.
+- Top-left LIVE entry hook updated for the 47.1.3 generator.
+- Home shows the installed TikTok version with a Supported version label.
+
 ## 0.4.23
 
 - Added a Home dashboard as the default destination with LSPosed service status and the installed TikTok version.
@@ -90,6 +98,14 @@
 - Added the Root-based Restart TikTok action.
 
 ## 中文
+
+### 0.4.24-1553-beta
+
+- 新增官方 TikTok 47.1.3 支持（保留 46.4.3 兼容路径）：顶部标签、底部导航栏和搜索入口改为按文本隐藏。
+- 覆盖轮换出现的标签（STEM、Friends、Drama、Shop），隐藏顶部溢出箭头与中间创建按钮；清空后的导航栏容器自动折叠。
+- 关注按钮通过 ix9 持久隐藏；收藏覆盖双路径；评论按钮保留 eq5 兜底与数量隐藏。
+- 左上 LIVE 入口已适配 47.1.3 生成器。
+- 首页显示已安装 TikTok 版本与受支持版本标签。
 
 ### 0.4.23
 

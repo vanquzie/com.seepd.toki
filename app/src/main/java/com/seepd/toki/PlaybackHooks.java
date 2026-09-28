@@ -16,6 +16,8 @@ final class PlaybackHooks extends HookFeature {
     private final AtomicBoolean manualPauseFailureLogged = new AtomicBoolean(false);
     private final AtomicBoolean speedAppliedLogged = new AtomicBoolean(false);
     private final AtomicBoolean speedFailureLogged = new AtomicBoolean(false);
+    private static final AtomicBoolean speedMissLogged = new AtomicBoolean(false);
+    private static final AtomicBoolean speedEffectLogged = new AtomicBoolean(false);
     private final WeakHashMap<Object, String> speedSourceIds = new WeakHashMap<>();
 
     PlaybackHooks(XposedModule module) {
@@ -215,13 +217,42 @@ final class PlaybackHooks extends HookFeature {
             if (setSpeed != null) {
                 setSpeed.invoke(controller, speed);
             } else {
-                Object playerManager = resolvePlayerManager(controller);
-                setSpeed = findFloatVoidMethod(
-                        playerManager == null ? null : playerManager.getClass(), "setSpeed");
-                if (setSpeed == null || playerManager == null) {
-                    throw new NoSuchMethodException("PlayerController#setSpeed(float)");
+                // 47.1.3 moved speed to the player manager (LJJIJLIJ); controller first.
+                Object playerManager = null;
+                try {
+                    playerManager = resolvePlayerManager(controller);
+                } catch (Exception ignored) {
+                    // Falls through to the miss path below.
                 }
-                setSpeed.invoke(playerManager, speed);
+                Method managerSetSpeed = playerManager == null ? null
+                        : findFloatVoidMethod(playerManager.getClass(), "LJJIJLIJ");
+                if (playerManager == null || managerSetSpeed == null) {
+                    if (speedMissLogged.compareAndSet(false, true)) {
+                        logInfo("playback speed has no target, leaving stock [TikTok 47.1.3]");
+                    }
+                    synchronized (speedSourceIds) {
+                        speedSourceIds.remove(controller);
+                    }
+                    return;
+                }
+                managerSetSpeed.invoke(playerManager, speed);
+                try {
+                    Method getSpeed = playerManager.getClass().getMethod("getSpeed");
+                    if (getSpeed.getParameterCount() == 0
+                            && getSpeed.getReturnType() == float.class) {
+                        getSpeed.setAccessible(true);
+                        Object observed = getSpeed.invoke(playerManager);
+                        float observedSpeed = observed instanceof Number
+                                ? ((Number) observed).floatValue() : Float.NaN;
+                        if (speedEffectLogged.compareAndSet(false, true)) {
+                            logInfo("playback speed effect: requested=" + speed
+                                    + " observed=" + observedSpeed
+                                    + " [TikTok 47.1.3]");
+                        }
+                    }
+                } catch (Throwable ignored) {
+                    // Rate readback unavailable; effect needs human ears.
+                }
             }
             if (speedAppliedLogged.compareAndSet(false, true)) {
                 logInfo("Default playback speed active: " + speed + "x");

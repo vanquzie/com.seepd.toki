@@ -25,13 +25,10 @@ final class AuthorLocationHooks extends HookFeature {
                     "com.ss.android.ugc.aweme.feed.model.Aweme",
                     false,
                     classLoader);
-            Class<?> titleBuilderType = Class.forName("X.0cvj", false, classLoader);
-            Method buildTitle = titleBuilderType.getDeclaredMethod(
-                    "LIZIZ", String.class, userType, awemeType);
-            if (!Modifier.isStatic(buildTitle.getModifiers())
-                    || buildTitle.getReturnType() != String.class) {
-                throw new NoSuchMethodException(
-                        "X.0cvj#LIZIZ(String, User, Aweme): String");
+            Method buildTitle = findTitleBuilder(classLoader, userType, awemeType);
+            if (buildTitle == null) {
+                logInfo("author-title builder has no target, skipping");
+                return 0;
             }
 
             Method getAuthor = awemeType.getMethod("getAuthor");
@@ -55,6 +52,29 @@ final class AuthorLocationHooks extends HookFeature {
             logError("Unable to install the 46.4.3 author-title builder hook", error);
             return 0;
         }
+    }
+
+    /**
+     * 47.1.3 moved the builder from X.0cvj to X.08zw with an identical
+     * signature; try the known exact targets in order, nothing else.
+     */
+    private static Method findTitleBuilder(
+            ClassLoader classLoader, Class<?> userType, Class<?> awemeType) {
+        for (String builderClass : new String[]{"X.0cvj", "X.08zw"}) {
+            try {
+                Class<?> titleBuilderType = Class.forName(
+                        builderClass, false, classLoader);
+                Method buildTitle = titleBuilderType.getDeclaredMethod(
+                        "LIZIZ", String.class, userType, awemeType);
+                if (Modifier.isStatic(buildTitle.getModifiers())
+                        && buildTitle.getReturnType() == String.class) {
+                    return buildTitle;
+                }
+            } catch (ClassNotFoundException | NoSuchMethodException ignored) {
+                // Try the next known builder.
+            }
+        }
+        return null;
     }
 
     private static Object addAuthorRegion(

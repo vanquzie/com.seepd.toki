@@ -14,6 +14,7 @@ import io.github.libxposed.api.XposedModuleInterface.PackageReadyParam;
 public final class MainHook extends XposedModule {
     private static final String TAG = "Toki";
     private final AtomicBoolean initialized = new AtomicBoolean(false);
+    private String activeTikTokVersion = "unknown";
 
     @Override
     public void onPackageReady(PackageReadyParam param) {
@@ -47,14 +48,21 @@ public final class MainHook extends XposedModule {
     private void install(ClassLoader classLoader, Context context, long processAttachedAt) {
         try {
             String versionName = readTikTokVersion(context);
+            activeTikTokVersion = versionName == null ? "unknown" : versionName;
             ModuleConfig config = loadModuleConfig(context);
+            String activeVersion = versionName == null ? "unknown" : versionName;
             logInfo("Active for " + context.getPackageName());
-            logInfo("TikTok version: " + (versionName == null ? "unknown" : versionName));
-            if (!ModuleConfig.TESTED_TIKTOK_VERSION.equals(versionName)) {
-                logInfo("This TikTok version is outside the supported target");
+            logInfo("TikTok version: " + activeVersion);
+            if (ModuleConfig.isSupportedTikTokVersion(versionName)) {
+                logInfo("TikTok version " + activeVersion + " is supported "
+                        + ModuleConfig.SUPPORTED_TIKTOK_VERSIONS);
+            } else {
+                logInfo("TikTok version " + activeVersion
+                        + " is untested; hooks install best-effort. Supported: "
+                        + ModuleConfig.SUPPORTED_TIKTOK_VERSIONS);
             }
-            logInfo("Implementation and test target: "
-                    + ModuleConfig.TESTED_TIKTOK_VERSION);
+            logInfo("Implementation and test targets: "
+                    + ModuleConfig.SUPPORTED_TIKTOK_VERSIONS);
             logInfo("Hook revision: direct-ui-gates-2-loop-replay-frame-4");
             logInfo("Loop prevention setting: " + config.disableLoop);
             logInfo("Always show video progress bar setting: "

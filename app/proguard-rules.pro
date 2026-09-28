@@ -25,3 +25,8 @@
 -keep,allowoptimization public class * extends io.github.libxposed.api.XposedModule {
     public <init>();
 }
+
+# Reflected by HookFeature.adoptHostVersion; stripping it silently disables version branches.
+-keepclassmembers public class com.seepd.toki.MainHook {
+    java.lang.String activeTikTokVersion;
+}
